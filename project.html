@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+<style>
+.slider {
+  -webkit-appearance: none;
+  width: 300px;
+  height: 15px;
+  border-radius: 50px;
+  background: #b27f4c;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #d3d3d3;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #d3d3d3;
+  cursor: pointer;
+}
+</style>
+<!--
+
+WebGL_example_26.html
+
+Interaction using the keyboard and the mouse
+
+J. Madeira - November 2015
+
+-->
+
+<title>The Knight's Tour &mdash; 1º Trabalho</title>
+
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+<!--
+
+The simple vertex and fragment shaders.
+
+Using a vertex coordinate buffer and a vertex colour buffer.
+
+Passing the Model-View Matrix and the Projection Matrix.
+
+-->
+
+<script id="shader-vs" type="x-shader/x-vertex">
+
+    attribute vec3 aVertexPosition;
+
+    attribute vec3 aVertexColor;
+
+    uniform mat4 uMVMatrix;
+
+    uniform mat4 uPMatrix;
+
+    varying vec4 vertexColor;
+
+    void main(void) {
+
+		// To allow seeing the points drawn
+
+		gl_PointSize = 5.0;
+
+		// Just converting the (x,y,z) vertices to Homogeneous Coord.
+
+		// And multiplying by the Projection and the Model-View matrix
+
+        gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+
+        // Converting the RGB color value to RGBA
+
+        vertexColor = vec4(aVertexColor, 1.0);
+//        vertexColor = vec4(aVertexColor[0]*1.0, aVertexColor[1]*0.5, aVertexColor[2]*0.31, 1.0);
+    }
+</script>
+
+<script id="shader-fs" type="x-shader/x-fragment">
+
+	precision mediump float;
+
+	varying vec4 vertexColor;
+
+	void main(void) {
+
+		// Using the passed vertex color
+
+		gl_FragColor = vertexColor;
+	}
+
+</script>
+
+<!-- The JS files -->
+
+<!-- Some useful functions for browser compatibility -->
+
+<script type="text/javascript" src="webgl-utils.js"></script>
+
+<!-- Handling vectors and matrices -->
+
+<script type="text/javascript" src="maths.js"></script>
+
+<!-- Processing triangle mesh models -->
+
+<script type="text/javascript" src="models.js"></script>
+
+<!-- WebGL code -->
+
+<script type="text/javascript" src="initShaders.js"></script>
+
+<script type="text/javascript" src="knightProblem.js"></script>
+
+<script type="text/javascript" src="sceneModels.js"></script>
+
+<script type="text/javascript" src="project.js"></script>
+
+</head>
+
+<body onload="runWebGL();">
+
+	<div style="text-align: center">
+
+		<div style="display: inline">
+		<p id="display" style="font-weight: bold; font-size: 30px; text-decoration: underline #b27f4c; display: none;">Performing move: <a id="moveNumber" style="color: #b27f4c;"></a>/<a style="color: #b27f4c;">63</a> <button id="reset" style="border:2px solid #b27f4c;width: 300px; height: 40px;font-size: 20px; display: none; margin-left: 300px;" onclick="stopAlgorithm()">Reset</button><p>
+		</div>
+		<div id="starter">
+		<button id="startButton" style="border:2px solid #b27f4c;width: 300px;height: 40px;font-size: 20px" disabled onclick="startAlgorithm()">Click on the starting square!</button>
+		<br><br>
+		</div>
+
+		<canvas id="my-canvas" style="border:2px solid #b27f4c;" width="900" height="480"></canvas>
+
+		<p id="scale" style="display: none">Press any mouse button and move the cursor to rotate the models. Use <code>Page Up</code>/<code>Page Down</code> to zoom out/in. </p>
+
+    <p>
+      <button id="on-off-button" style="border:2px solid #b27f4c;width: 150px;height: 30px;font-size: 20px; display: none">Pause</button>
+
+	    <button id="change-direction" style="border:2px solid #b27f4c;width: 150px;height: 30px;font-size: 20px; display: none">Backwards</button>
+    </p>
+			<input class="slider" type="range" min="1" max="64" value="1" id="moveSlider" style="display: none" disabled>
+		
+		<p id="obj-text" style="display: none">Read a 3D model from a <b>OBJ file</b>:
+		
+		<input type="file" id="obj-file" name="file" style="display: none">
+		
+		</p>
+		
+
+	</div>
+
+</body>
+
+</html>
